@@ -19,6 +19,7 @@
 
         ykfde = with pkgs; let
           dependencies = [
+            coreutils
             cryptsetup
             openssl
             parted
@@ -31,8 +32,9 @@
             version = "latest";
             src = self;
             nativeBuildInputs = [makeWrapper];
-            buildPhase = "makeWrapper ${./ykfde.sh} ykfde --prefix PATH : ${lib.makeBinPath dependencies}";
-            installPhase = "install -D ykfde $out/bin/ykfde";
+            buildPhase = "cp ${./ykfde.sh} ykfde && chmod +x ykfde.sh";
+            installPhase = "install -Dt $out/bin ykfde";
+            postFixup = "wrapProgram $out/bin/ykfde --set PATH ${lib.makeBinPath dependencies}";
           };
 
         pbkdf2-sha512 = let
